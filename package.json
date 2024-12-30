@@ -1,0 +1,48 @@
+{
+  "name": "music-chain-avail",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat deploy-zksync --script deploy-music.ts"
+  },
+  "dependencies": {
+    "@nextui-org/react": "^2.6.8",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.9.0",
+    "framer-motion": "^11.14.1",
+    "next": "15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.4.1",
+    "ws": "^8.16.0",
+    "zksync-ethers": "^6.15.3"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@matterlabs/hardhat-zksync-deploy": "^1.1.2",
+    "@matterlabs/hardhat-zksync-solc": "^1.0.6",
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.0",
+    "hardhat": "^2.19.4",
+    "postcss": "^8",
+    "solc": "^0.8.28",
+    "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "zksync-web3": {
+      "ethers": "^6.9.0"
+    }
+  }
+}
