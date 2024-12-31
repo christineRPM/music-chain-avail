@@ -9,6 +9,8 @@ import toast from 'react-hot-toast';
 
 interface MusicalGameProps {
   playerInfo: PlayerInfo;
+  onToggleStats: () => void;
+  showStats: boolean;
   ref?: React.ForwardedRef<{
     playSequence: (notes: number[]) => Promise<void>;
     isPlaying: boolean;
@@ -20,7 +22,7 @@ const MusicalGame = forwardRef<{
   playSequence: (notes: number[]) => Promise<void>;
   isPlaying: boolean;
   activeNote: number | null;
-}, MusicalGameProps>(({ playerInfo }, ref) => {
+}, MusicalGameProps>(({ playerInfo, onToggleStats, showStats }, ref) => {
   const [activeNote, setActiveNote] = useState<number | null>(null);
   const [sequence, setSequence] = useState<number[]>([]);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
@@ -172,9 +174,17 @@ const MusicalGame = forwardRef<{
   return (
     <Card className="w-full h-[calc(100vh-4rem)] flex flex-col">
       <CardHeader className="flex-none flex flex-col md:flex-row gap-y-4 justify-between items-center p-4">
-        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
-          Musical Chain
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+            Musical Chain
+          </h1>
+          <button
+            onClick={onToggleStats}
+            className="inline-flex items-center px-2 py-1 text-sm bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full shadow hover:scale-[0.98] transition-transform"
+          >
+            {showStats ? '🎮' : '🎵'}
+          </button>
+        </div>
         <div className="flex flex-col md:flex-row w-full md:w-2/3 items-center justify-content-end gap-4">
           <Input
             placeholder="Enter sequence title"

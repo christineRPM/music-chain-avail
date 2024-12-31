@@ -25,34 +25,23 @@ export default function Home() {
       {!playerInfo ? (
         <PlayerSetup onPlayerReady={setPlayerInfo} />
       ) : (
-        <div className="flex flex-col md:flex-row gap-8 items-stretch h-full max-w-[1600px] mx-auto relative pb-16 md:pb-0 overflow-y-auto">
-          <div className={`flex-1 ${showStats ? 'hidden md:block' : 'block'}`}>
-            <MusicalGame ref={gameRef} playerInfo={playerInfo} />
+        <div className="flex flex-col md:flex-row md:gap-8 items-stretch h-full max-w-[1600px] mx-auto relative pb-16 md:pb-0 overflow-y-auto">
+          <div className="w-full">
+            <div className={`flex-1 ${showStats ? 'hidden md:block' : 'block'}`}>
+              <MusicalGame ref={gameRef} playerInfo={playerInfo} onToggleStats={() => setShowStats(!showStats)} showStats={showStats} />
+            </div>
           </div>
           <div className={`w-full md:w-[400px] ${!showStats ? 'hidden md:block' : 'block'}`}>
             <div className="flex flex-col h-full">
-              <div className="md:hidden mb-4">
-                <button
-                  onClick={() => setShowStats(false)}
-                  className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:scale-105 transition-transform"
-                >
-                  Back to Game
-                </button>
-              </div>
               <MusicPiecesDisplay 
                 playerId={playerInfo.playerId} 
                 onPlayPiece={handlePlayPiece}
+                onClose={() => setShowStats(false)}
                 isPlaying={gameRef.current?.isPlaying || false}
                 activeNote={gameRef.current?.activeNote}
               />
             </div>
           </div>
-          <button
-            onClick={() => setShowStats(!showStats)}
-            className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:scale-[0.98] transition-transform text-lg font-medium"
-          >
-            {showStats ? 'Return to Game 🎮' : 'View Music Collection 🎵'}
-          </button>
         </div>
       )}
     </main>
