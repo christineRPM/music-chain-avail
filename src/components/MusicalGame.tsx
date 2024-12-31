@@ -237,8 +237,8 @@ const MusicalGame = forwardRef<{
         </div>
 
         {/* Sequence display and controls */}
-        <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center gap-4">
-          <div className="flex flex-wrap justify-center gap-2 max-h-52  overflow-y-auto">
+        <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center gap-4 w-full">
+          <div className="flex flex-wrap justify-center gap-2 max-h-52 w-full overflow-y-auto">
             {sequence.map((noteIndex, i) => (
               <div
                 key={i}

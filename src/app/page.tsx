@@ -21,11 +21,11 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen h-screen p-0 md:p-8 bg-gradient-to-br from-purple-50 to-pink-50">
+    <main className="min-h-[100dvh] h-[100dvh] p-0 md:p-8 bg-gradient-to-br from-purple-50 to-pink-50">
       {!playerInfo ? (
         <PlayerSetup onPlayerReady={setPlayerInfo} />
       ) : (
-        <div className="flex flex-col md:flex-row gap-8 items-stretch h-full max-w-[1600px] mx-auto relative pb-20 md:pb-0">
+        <div className="flex flex-col md:flex-row gap-8 items-stretch h-full max-w-[1600px] mx-auto relative pb-16 md:pb-0 overflow-y-auto">
           <div className={`flex-1 ${showStats ? 'hidden md:block' : 'block'}`}>
             <MusicalGame ref={gameRef} playerInfo={playerInfo} />
           </div>
