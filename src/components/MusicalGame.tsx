@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, forwardRef, useImperativeHandl
 import { Card, CardBody, CardHeader, Button, Input } from "@nextui-org/react";
 import { PlayerInfo } from '@/types/game';
 import { useMusicGame } from '@/hooks/scaffold-eth/useMusicGame';
-import { notes, Note } from '@/lib/notes';
+import { notes } from '@/lib/notes';
 import toast from 'react-hot-toast';
 
 interface MusicalGameProps {

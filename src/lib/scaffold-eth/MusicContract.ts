@@ -9,13 +9,6 @@ interface PlayerData {
   sequencePosition: bigint;
 }
 
-interface MusicPieceEvent {
-  args: {
-    id: bigint;
-    creator: string;
-  };
-}
-
 export interface MusicPiece {
   creator: string;
   sequence: number[];

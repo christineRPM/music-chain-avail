@@ -50,7 +50,7 @@ const MusicPiecesDisplayComponent: React.FC<MusicPiecesDisplayProps> = ({
           </div>
         ) : (
           <div className="space-y-4">
-            {sortedPieces.map((piece, index) => (
+            {sortedPieces.map((piece) => (
               <Card 
                 key={`${piece.title}-${piece.timestamp}`} 
                 className="w-full bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 transition-colors"

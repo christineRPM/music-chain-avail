@@ -8,12 +8,6 @@ interface CreateSequenceRequest {
   sequence: number[];
 }
 
-interface SaveSequenceRequest {
-  playerId: string;
-  sequence: number[];
-  title: string;
-}
-
 export async function POST(request: Request) {
   try {
     const body = await request.json() as CreateSequenceRequest;

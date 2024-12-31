@@ -29,7 +29,7 @@ export const PlayerSetup: React.FC<PlayerSetupProps> = ({ onPlayerReady }) => {
   const [color, setColor] = useState<string>('');
   const [number, setNumber] = useState<number | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +88,7 @@ export const PlayerSetup: React.FC<PlayerSetupProps> = ({ onPlayerReady }) => {
         <CardBody>
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-2">
-              <h2 className="text-xl font-bold text-center">What's your name?</h2>
+              <h2 className="text-xl font-bold text-center">What is your name?</h2>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
