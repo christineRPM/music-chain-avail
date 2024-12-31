@@ -189,14 +189,14 @@ const MusicalGame = forwardRef<{
       </CardHeader>
 
       <CardBody className="flex-1 relative">
-        <div className="relative w-96 h-96 mx-auto my-auto">
+        <div className="relative w-fit h-96 mx-auto mt-2">
           {/* Note bubbles */}
           {notes.map((note, i) => (
             <div
               key={note.note}
               className="absolute transform -translate-x-1/2 -translate-y-1/2"
               style={{
-                left: `${note.position.x + 192}px`,
+                left: `${note.position.x}px`,
                 top: `${note.position.y + 192}px`
               }}
               onClick={() => handleNoteClick(i)}
@@ -238,7 +238,7 @@ const MusicalGame = forwardRef<{
 
         {/* Sequence display and controls */}
         <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center gap-4">
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex flex-wrap justify-center gap-2 max-h-52  overflow-y-auto">
             {sequence.map((noteIndex, i) => (
               <div
                 key={i}
@@ -277,14 +277,14 @@ const MusicalGame = forwardRef<{
               onClick={() => playSequence()}
               isDisabled={isPlaying || sequence.length === 0}
             >
-              {isPlaying ? "Playing..." : "Play Sequence"}
+              {isPlaying ? "Playing..." : "Play"}
             </Button>
             <Button
               color="success"
               onClick={handleSave}
               isDisabled={isSaving || isPlaying || sequence.length === 0 || !title}
             >
-              {isSaving ? "Saving..." : "Save to Blockchain"}
+              {isSaving ? "Saving..." : "Save"}
             </Button>
             <Button
               color="danger"

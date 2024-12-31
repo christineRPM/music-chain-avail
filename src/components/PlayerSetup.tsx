@@ -140,15 +140,17 @@ export const PlayerSetup: React.FC<PlayerSetupProps> = ({ onPlayerReady }) => {
               </div>
             )}
 
-            <Button
-              type="submit"
-              color="secondary"
-              className="w-full max-w-xs mx-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white"
-              isLoading={isRegistering}
-              isDisabled={!name.trim() || !color || !number || isRegistering}
-            >
-              {isRegistering ? "Registering..." : "Start Playing"}
-            </Button>
+            <div className="flex space-y-4 items-center">
+              <Button
+                type="submit"
+                color="secondary"
+                className="w-full max-w-xs mx-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                isLoading={isRegistering}
+                isDisabled={!name.trim() || !color || !number || isRegistering}
+              >
+                {isRegistering ? "Registering..." : "Start Playing"}
+              </Button>
+            </div>
           </form>
         </CardBody>
       </Card>

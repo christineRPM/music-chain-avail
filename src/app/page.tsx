@@ -21,11 +21,11 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen h-screen p-8 bg-gradient-to-br from-purple-50 to-pink-50">
+    <main className="min-h-screen h-screen p-0 md:p-8 bg-gradient-to-br from-purple-50 to-pink-50">
       {!playerInfo ? (
         <PlayerSetup onPlayerReady={setPlayerInfo} />
       ) : (
-        <div className="flex flex-col md:flex-row gap-8 items-stretch h-full max-w-[1600px] mx-auto relative">
+        <div className="flex flex-col md:flex-row gap-8 items-stretch h-full max-w-[1600px] mx-auto relative pb-20 md:pb-0">
           <div className={`flex-1 ${showStats ? 'hidden md:block' : 'block'}`}>
             <MusicalGame ref={gameRef} playerInfo={playerInfo} />
           </div>
@@ -49,9 +49,9 @@ export default function Home() {
           </div>
           <button
             onClick={() => setShowStats(!showStats)}
-            className="md:hidden fixed bottom-4 right-4 p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:scale-105 transition-transform"
+            className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:scale-[0.98] transition-transform text-lg font-medium"
           >
-            {showStats ? '🎮' : '🎵'}
+            {showStats ? 'Return to Game 🎮' : 'View Music Collection 🎵'}
           </button>
         </div>
       )}
