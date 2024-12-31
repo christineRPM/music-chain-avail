@@ -38,16 +38,6 @@ const MusicalGame = forwardRef<{
     };
   }, []);
 
-  useEffect(() => {
-    if (sequence.length > 0) {
-      const defaultTitle = `${playerInfo.name}'s Melody #${musicPieces.length + 1}`;
-      // setTitle(defaultTitle);
-    } else if (sequence.length === 0) {
-      // setTitle("");
-      // setTitleEdited(false);
-    }
-  }, [sequence, playerInfo.name, musicPieces.length]);
-
   const playSound = useCallback(async (frequency: number) => {
     if (!audioContext) return;
 
@@ -135,7 +125,7 @@ const MusicalGame = forwardRef<{
     try {
       setIsSaving(true);
       const title = `${playerInfo.name}'s Melody #${musicPieces.length + 1}`;
-      await saveMusicPiece(sequence, title);
+      await saveMusicPiece(title, sequence);
       await refetchMusicPieces();
       setSequence([]);
       toast.success('Sequence saved successfully!');
