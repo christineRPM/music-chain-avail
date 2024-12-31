@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
-import { Card, CardBody, CardHeader, Button, Input } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Button } from "@nextui-org/react";
 import { PlayerInfo } from '@/types/game';
 import { useMusicGame } from '@/hooks/scaffold-eth/useMusicGame';
 import { notes } from '@/lib/notes';
@@ -27,9 +27,7 @@ const MusicalGame = forwardRef<{
   const [sequence, setSequence] = useState<number[]>([]);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>("");
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [titleEdited, setTitleEdited] = useState<boolean>(false);
   const { saveMusicPiece, musicPieces, refetchMusicPieces } = useMusicGame(playerInfo.playerId);
 
   useEffect(() => {
@@ -41,14 +39,14 @@ const MusicalGame = forwardRef<{
   }, []);
 
   useEffect(() => {
-    if (sequence.length > 0 && !titleEdited) {
+    if (sequence.length > 0) {
       const defaultTitle = `${playerInfo.name}'s Melody #${musicPieces.length + 1}`;
-      setTitle(defaultTitle);
+      // setTitle(defaultTitle);
     } else if (sequence.length === 0) {
-      setTitle("");
-      setTitleEdited(false);
+      // setTitle("");
+      // setTitleEdited(false);
     }
-  }, [sequence, playerInfo.name, musicPieces.length, titleEdited]);
+  }, [sequence, playerInfo.name, musicPieces.length]);
 
   const playSound = useCallback(async (frequency: number) => {
     if (!audioContext) return;
@@ -128,38 +126,22 @@ const MusicalGame = forwardRef<{
     activeNote
   }));
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value;
-    setTitle(newTitle);
-    // Reset to auto-generate if user clears the title
-    if (newTitle.trim() === '') {
-      setTitleEdited(false);
-    } else {
-      setTitleEdited(true);
-    }
-  };
-
   const handleSave = async () => {
-    if (sequence.length === 0 || !title || isSaving) return;
-    
+    if (sequence.length === 0) {
+      toast.error('Please create a sequence first!');
+      return;
+    }
+
     try {
       setIsSaving(true);
-      await saveMusicPiece(title, sequence);
-      // Trigger immediate refetch after saving
+      const title = `${playerInfo.name}'s Melody #${musicPieces.length + 1}`;
+      await saveMusicPiece(sequence, title);
       await refetchMusicPieces();
       setSequence([]);
-      setTitle("");
-      setTitleEdited(false);
-      toast({
-        title: "Success",
-        description: "Your sequence has been saved"
-      });
+      toast.success('Sequence saved successfully!');
     } catch (error) {
       console.error('Error saving sequence:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save sequence"
-      });
+      toast.error('Failed to save sequence');
     } finally {
       setIsSaving(false);
     }
@@ -167,8 +149,6 @@ const MusicalGame = forwardRef<{
 
   const handleClear = () => {
     setSequence([]);
-    setTitle("");
-    setTitleEdited(false);
   };
 
   return (
@@ -185,13 +165,7 @@ const MusicalGame = forwardRef<{
             {showStats ? '🎮' : '🎵'}
           </button>
         </div>
-        <div className="flex flex-col md:flex-row w-full md:w-2/3 items-center justify-content-end gap-4">
-          <Input
-            placeholder="Enter sequence title"
-            value={title}
-            onChange={handleTitleChange}
-            className="w-full max-w-full md:max-w-xs"
-          />
+        <div className="flex flex-col md:flex-row w-full md:w-2/3 items-center justify-end gap-4">
           <div className="text-xl text-gray-600">
             Creator: {playerInfo.name}
           </div>
@@ -292,7 +266,7 @@ const MusicalGame = forwardRef<{
             <Button
               color="success"
               onClick={handleSave}
-              isDisabled={isSaving || isPlaying || sequence.length === 0 || !title}
+              isDisabled={isSaving || isPlaying || sequence.length === 0}
             >
               {isSaving ? "Saving..." : "Save"}
             </Button>
