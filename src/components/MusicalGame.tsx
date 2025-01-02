@@ -12,19 +12,20 @@ interface MusicalGameProps {
   onToggleStats: () => void;
   showStats: boolean;
   ref?: React.ForwardedRef<{
-    playSequence: (notes: number[]) => Promise<void>;
+    playSequence: (notes: number[], timings: number[]) => Promise<void>;
     isPlaying: boolean;
     activeNote: number | null;
   }>;
 }
 
 const MusicalGame = forwardRef<{
-  playSequence: (notes: number[]) => Promise<void>;
+  playSequence: (notes: number[], timings: number[]) => Promise<void>;
   isPlaying: boolean;
   activeNote: number | null;
 }, MusicalGameProps>(({ playerInfo, onToggleStats, showStats }, ref) => {
   const [activeNote, setActiveNote] = useState<number | null>(null);
   const [sequence, setSequence] = useState<number[]>([]);
+  const [timeStamps, setTimeStamps] = useState<number[]>([]);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -74,7 +75,7 @@ const MusicalGame = forwardRef<{
     }
   }, [audioContext]);
 
-  const playSequence = useCallback(async (sequenceToPlay: number[] = sequence) => {
+  const playSequence = useCallback(async (sequenceToPlay: number[] = sequence, timingsToUse: number[] = timeStamps) => {
     if (sequenceToPlay.length === 0 || isPlaying) return;
     
     try {
@@ -83,9 +84,19 @@ const MusicalGame = forwardRef<{
         const noteIndex = sequenceToPlay[i];
         setActiveNote(noteIndex);
         await playSound(notes[noteIndex].frequency);
-        await new Promise(resolve => setTimeout(resolve, 600));
+        
+        if (i < sequenceToPlay.length - 1) {
+          // Calculate delay based on timing data
+          const currentTime = timingsToUse[i];
+          const nextTime = timingsToUse[i + 1];
+          const delay = nextTime - currentTime;
+          
+          // Use a reasonable minimum delay and cap maximum delay
+          const actualDelay = Math.max(100, Math.min(delay, 2000));
+          await new Promise(resolve => setTimeout(resolve, actualDelay));
+        }
+        
         setActiveNote(null);
-        await new Promise(resolve => setTimeout(resolve, 100));
       }
     } catch (error) {
       console.error('Error playing sequence:', error);
@@ -93,12 +104,14 @@ const MusicalGame = forwardRef<{
     } finally {
       setIsPlaying(false);
     }
-  }, [sequence, isPlaying, notes, playSound]);
+  }, [isPlaying, notes, playSound, timeStamps]);
 
   const handleNoteClick = (index: number) => {
     setActiveNote(index);
     playSound(notes[index].frequency);
+    const currentTime = Date.now();
     setSequence(prev => [...prev, index]);
+    setTimeStamps(prev => [...prev, currentTime]);
     setTimeout(() => setActiveNote(null), 500);
   };
 
@@ -107,6 +120,11 @@ const MusicalGame = forwardRef<{
       const newSequence = [...prev];
       newSequence.splice(index, 1);
       return newSequence;
+    });
+    setTimeStamps(prev => {
+      const newTimeStamps = [...prev];
+      newTimeStamps.splice(index, 1);
+      return newTimeStamps;
     });
   };
 
@@ -125,9 +143,10 @@ const MusicalGame = forwardRef<{
     try {
       setIsSaving(true);
       const title = `${playerInfo.name}'s Melody #${musicPieces.length + 1}`;
-      await saveMusicPiece(title, sequence);
+      await saveMusicPiece(title, sequence, timeStamps);
       await refetchMusicPieces();
       setSequence([]);
+      setTimeStamps([]);
       toast.success('Sequence saved successfully!');
     } catch (error) {
       console.error('Error saving sequence:', error);
@@ -139,6 +158,7 @@ const MusicalGame = forwardRef<{
 
   const handleClear = () => {
     setSequence([]);
+    setTimeStamps([]);
   };
 
   return (

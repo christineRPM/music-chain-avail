@@ -4,6 +4,7 @@ import { toast } from '@/utils/scaffold-eth';
 export interface MusicPiece {
   title: string;
   sequence: number[];
+  timings: number[];
   timestamp: number;
   creator: string;
 }
@@ -60,7 +61,7 @@ export const useMusicGame = (playerId: string) => {
     return () => clearInterval(interval);
   }, [fetchMusicPieces, playerId]);
 
-  const saveMusicPiece = useCallback(async (title: string, sequence: number[]) => {
+  const saveMusicPiece = useCallback(async (title: string, sequence: number[], timings: number[]) => {
     if (!playerId) return;
 
     try {
@@ -70,15 +71,15 @@ export const useMusicGame = (playerId: string) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          playerId,
           title,
           sequence,
+          timings,
+          playerId,
         }),
       });
 
-      const data = await response.json();
-      
       if (!response.ok) {
+        const data = await response.json();
         throw new Error(data.message || 'Failed to save music piece');
       }
 
@@ -90,7 +91,7 @@ export const useMusicGame = (playerId: string) => {
       // Force immediate fetch after saving
       await fetchMusicPieces(true);
       
-      return data;
+      return response.json();
     } catch (error) {
       console.error('Error saving music piece:', error);
       throw error;

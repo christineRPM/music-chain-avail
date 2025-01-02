@@ -12,6 +12,7 @@ interface PlayerData {
 export interface MusicPiece {
   creator: string;
   sequence: number[];
+  timings: number[];
   title: string;
   timestamp: number;
 }
@@ -156,31 +157,20 @@ export class MusicContract {
         events
           .filter((event: any) => {
             console.log('Checking event:', event);
-            return event.args?.creator?.toLowerCase() === playerId.toLowerCase();
+            // The creator is now the second argument in the event args
+            return event.args?.[1]?.toLowerCase() === playerId.toLowerCase();
           })
           .map(async (event) => {
             try {
               const log = event as any;
-              if (!log.args?.id) {
+              if (!log.args) {
                 console.error('Invalid event log:', log);
                 return null;
               }
 
-              // Call getMusicPiece instead of accessing musicPieces mapping directly
-              const [creator, notes, title, timestamp] = await this.contract.getMusicPiece(log.args.id);
-              console.log('Raw piece data:', {
-                creator,
-                notes: notes.map((n: bigint) => Number(n)),
-                title,
-                timestamp: Number(timestamp)
-              });
-
-              return {
-                title: title || '',
-                sequence: notes.map((n: bigint) => Number(n)),
-                timestamp: Number(timestamp || 0),
-                creator: creator || ''
-              };
+              // Get the piece ID from the first argument
+              const pieceId = Number(log.args[0]);
+              return await this.getMusicPiece(pieceId);
             } catch (error) {
               console.error('Error processing piece:', error);
               return null;
@@ -188,6 +178,7 @@ export class MusicContract {
           })
       );
 
+      // Filter out any null values and return valid pieces
       const validPieces = pieces.filter((piece): piece is MusicPiece => piece !== null);
       console.log('Final pieces:', validPieces);
       return validPieces;
@@ -197,30 +188,39 @@ export class MusicContract {
     }
   }
 
-  async createMusicPiece(creator: string, sequence: number[], title: string): Promise<unknown> {
+  async createMusicPiece(creator: string, sequence: number[], timings: number[], title: string): Promise<unknown> {
     try {
       await this.ensureProvider();
-      console.log('Creating music piece:', { creator, sequence, title });
+      console.log('Creating music piece:', { creator, sequence, timings, title });
       
       const sequenceForContract = sequence.map(note => BigInt(note));
+      const timingsForContract = timings.map(timing => BigInt(timing));
       
-      const tx = await this.contract.createMusicPiece(creator, sequenceForContract, title);
+      const tx = await this.contract.createMusicPiece(creator, sequenceForContract, timingsForContract, title);
       console.log('Transaction sent:', tx.hash);
       
       const receipt = await tx.wait();
-      console.log('Transaction receipt:', receipt);
-
-      const event = receipt.logs.find((log: any) => 
-        log.fragment?.name === "MusicPieceCreated"
-      );
-
-      if (!event) {
-        throw new Error("Failed to create music piece: Event not found");
-      }
-
-      return event;
+      console.log('Transaction confirmed:', receipt);
+      
+      return receipt;
     } catch (error) {
-      console.error('Contract error:', error);
+      console.error('Error creating music piece:', error);
+      throw error;
+    }
+  }
+
+  async getMusicPiece(id: number): Promise<MusicPiece> {
+    try {
+      const [creator, sequence, timings, title, timestamp] = await this.contract.getMusicPiece(id);
+      return {
+        creator,
+        sequence: this.convertSequenceToNumbers(sequence),
+        timings: this.convertSequenceToNumbers(timings),
+        title,
+        timestamp: Number(timestamp)
+      };
+    } catch (error) {
+      console.error('Error getting music piece:', error);
       throw error;
     }
   }

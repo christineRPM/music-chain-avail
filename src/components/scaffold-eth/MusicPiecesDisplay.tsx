@@ -7,7 +7,7 @@ import { notes } from '@/lib/notes';
 
 interface MusicPiecesDisplayProps {
   playerId: string;
-  onPlayPiece?: (notes: number[]) => void;
+  onPlayPiece?: (notes: number[], timings: number[]) => void;
   onClose?: () => void;
   isPlaying?: boolean;
   activeNote?: number | null;
@@ -79,7 +79,7 @@ const MusicPiecesDisplayComponent: React.FC<MusicPiecesDisplayProps> = ({
                             size="sm"
                             color="secondary"
                             variant="flat"
-                            onClick={() => onPlayPiece(piece.sequence)}
+                            onClick={() => onPlayPiece(piece.sequence, piece.timings)}
                             isDisabled={isPlaying}
                             className="min-w-[80px]"
                           >

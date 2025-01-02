@@ -6,16 +6,16 @@ interface CreateSequenceRequest {
   playerId: string;
   title: string;
   sequence: number[];
+  timings: any; // Add timings property to the interface
 }
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json() as CreateSequenceRequest;
-    console.log('Received request body:', body); // Debug log
+    const { playerId, title, sequence, timings } = await request.json();
 
-    if (!body.playerId || !body.sequence || !Array.isArray(body.sequence)) {
+    if (!playerId || !title || !sequence || !timings) {
       return NextResponse.json(
-        { error: 'Invalid request: missing playerId or sequence' },
+        { error: 'Missing required parameters' },
         { status: 400 }
       );
     }
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const contract = new MusicContract();
     
     // Validate sequence array
-    if (!body.sequence.every(note => Number.isInteger(note) && note >= 0)) {
+    if (!sequence.every(note => Number.isInteger(note) && note >= 0)) {
       return NextResponse.json(
         { error: 'Invalid sequence: must be array of non-negative integers' },
         { status: 400 }
@@ -31,16 +31,17 @@ export async function POST(request: Request) {
     }
 
     await contract.createMusicPiece(
-      body.playerId,
-      body.sequence,
-      body.title || `Melody #${Date.now()}`
+      playerId,
+      sequence,
+      timings,
+      title
     );
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error creating sequence:', error);
+    console.error('Error saving sequence:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to create sequence' },
+      { error: error instanceof Error ? error.message : 'Failed to save sequence' },
       { status: 500 }
     );
   }
@@ -65,6 +66,7 @@ export async function GET(request: Request) {
       pieces: pieces.map(piece => ({
         title: piece.title,
         sequence: piece.sequence,
+        timings: piece.timings,
         timestamp: piece.timestamp,
         creator: piece.creator
       }))

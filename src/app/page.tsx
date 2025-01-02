@@ -11,13 +11,13 @@ export default function Home() {
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo | null>(null);
   const [showStats, setShowStats] = useState(false);
   const gameRef = useRef<{
-    playSequence: (notes: number[]) => Promise<void>;
+    playSequence: (notes: number[], timings: number[]) => Promise<void>;
     isPlaying: boolean;
     activeNote: number | null;
   }>(null);
 
-  const handlePlayPiece = (notes: number[]) => {
-    gameRef.current?.playSequence(notes);
+  const handlePlayPiece = (notes: number[], timings: number[]) => {
+    gameRef.current?.playSequence(notes, timings);
   };
 
   return (

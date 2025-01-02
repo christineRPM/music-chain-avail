@@ -12,6 +12,7 @@ contract MusicSequence {
     struct MusicPiece {
         string creator;
         uint256[] notes;
+        uint256[] timings;
         string title;
         uint256 timestamp;
     }
@@ -32,13 +33,20 @@ contract MusicSequence {
         emit PlayerRegistered(playerId, name);
     }
     
-    function createMusicPiece(string memory _creator, uint256[] memory _notes, string memory _title) public returns (uint256) {
+    function createMusicPiece(
+        string memory _creator, 
+        uint256[] memory _notes, 
+        uint256[] memory _timings, 
+        string memory _title
+    ) public returns (uint256) {
         require(_notes.length > 0, "Sequence cannot be empty");
+        require(_notes.length == _timings.length, "Notes and timings must have same length");
         require(bytes(_title).length > 0, "Title cannot be empty");
         
         MusicPiece memory newPiece = MusicPiece({
             creator: _creator,
             notes: _notes,
+            timings: _timings,
             title: _title,
             timestamp: block.timestamp
         });
@@ -50,10 +58,16 @@ contract MusicSequence {
         return newPieceId;
     }
     
-    function getMusicPiece(uint256 _id) public view returns (string memory creator, uint256[] memory notes, string memory title, uint256 timestamp) {
+    function getMusicPiece(uint256 _id) public view returns (
+        string memory creator, 
+        uint256[] memory notes, 
+        uint256[] memory timings,
+        string memory title, 
+        uint256 timestamp
+    ) {
         require(_id < musicPieces.length, "Music piece does not exist");
         MusicPiece memory piece = musicPieces[_id];
-        return (piece.creator, piece.notes, piece.title, piece.timestamp);
+        return (piece.creator, piece.notes, piece.timings, piece.title, piece.timestamp);
     }
     
     function getMusicPiecesCount() public view returns (uint256) {
