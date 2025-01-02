@@ -104,7 +104,7 @@ const MusicalGame = forwardRef<{
     } finally {
       setIsPlaying(false);
     }
-  }, [isPlaying, notes, playSound, timeStamps]);
+  }, [isPlaying, playSound, sequence, notes]);
 
   const handleNoteClick = (index: number) => {
     setActiveNote(index);
