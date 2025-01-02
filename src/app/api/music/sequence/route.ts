@@ -2,13 +2,6 @@
 import { NextResponse } from 'next/server';
 import { MusicContract } from '@/lib/scaffold-eth/MusicContract';
 
-interface CreateSequenceRequest {
-  playerId: string;
-  title: string;
-  sequence: number[];
-  timings: any; // Add timings property to the interface
-}
-
 export async function POST(request: Request) {
   try {
     const { playerId, title, sequence, timings } = await request.json();
