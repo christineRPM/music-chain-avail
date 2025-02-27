@@ -156,10 +156,24 @@ For workshop/demonstration purposes, this implementation uses a simplified archi
 In a production environment, these would typically be integrated at the protocol level, with zkSync Era automatically handling data availability through Avail. However, for learning purposes and time constraints, we're using TurboDA's API directly:
 
 ```bash
-curl --location 'https://staging.turbo-api.availproject.org/user/submit_raw_data?token=ethereum' \
---header 'Content-Type: text/plain' \
---header 'Authorization: Bearer YOUR_API_KEY' \
---data 'transaction_data'
+curl --location --request POST 'https://staging.turbo-api.availproject.org/v1/submit_raw_data' \
+--header 'x-api-key: YOUR_API_KEY' \
+--header 'Content-Type: application/octet-stream' \
+--data-binary 'your_data'
 ```
 
-This separation allows us to demonstrate both systems' functionality without requiring a full protocol-level integration.
+Example response:
+```json
+{
+  "id": "submission_id",
+  "status": "success"
+}
+```
+
+The implementation:
+1. Sends music piece data to TurboDA via a secure server-side API route
+2. Uses proper binary data submission with `application/octet-stream`
+3. Authenticates using the TurboDA API key
+4. Receives immediate confirmation of data submission
+
+This separation allows us to demonstrate both systems' functionality without requiring a full protocol-level integration, while still maintaining proper data availability guarantees through Avail's TurboDA service.
