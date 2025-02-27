@@ -31,7 +31,7 @@ const MusicalGame = forwardRef<{
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const { saveMusicPiece, musicPieces, refetchMusicPieces } = useMusicGame(playerInfo.playerId);
-  const { submitToTurboDA, isSubmitting: isSubmittingToAvail } = useTurboDA();
+  const { submitToTurboDA } = useTurboDA();
 
   useEffect(() => {
     const context = new (window.AudioContext || (window as any).webkitAudioContext)();

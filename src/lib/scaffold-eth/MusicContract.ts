@@ -130,7 +130,7 @@ export class MusicContract {
     try {
       await this.ensureProvider();
       const tx = await this.contract.registerPlayer(name, playerId);
-      const receipt = await tx.wait();
+      await tx.wait();
       return playerId;
     } catch (error) {
       console.error('Error registering player:', error);
