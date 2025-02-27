@@ -6,6 +6,7 @@ import { PlayerInfo } from '@/types/game';
 import { useMusicGame } from '@/hooks/scaffold-eth/useMusicGame';
 import { notes } from '@/lib/notes';
 import toast from 'react-hot-toast';
+import { useTurboDA } from '@/hooks/useTurboDA';
 
 interface MusicalGameProps {
   playerInfo: PlayerInfo;
@@ -30,6 +31,7 @@ const MusicalGame = forwardRef<{
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const { saveMusicPiece, musicPieces, refetchMusicPieces } = useMusicGame(playerInfo.playerId);
+  const { submitToTurboDA, isSubmitting: isSubmittingToAvail } = useTurboDA();
 
   useEffect(() => {
     const context = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -143,7 +145,21 @@ const MusicalGame = forwardRef<{
     try {
       setIsSaving(true);
       const title = `${playerInfo.name}'s Melody #${musicPieces.length + 1}`;
+      
+      // Save to zkSync
       await saveMusicPiece(title, sequence, timeStamps);
+      
+      // Submit to Avail TurboDA
+      const turboDAData = JSON.stringify({
+        title,
+        creator: playerInfo.name,
+        sequence,
+        timeStamps,
+        timestamp: Date.now()
+      });
+      
+      await submitToTurboDA(turboDAData);
+      
       await refetchMusicPieces();
       setSequence([]);
       setTimeStamps([]);

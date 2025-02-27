@@ -118,9 +118,7 @@ export class MusicContract {
   async playerExists(playerId: string): Promise<boolean> {
     try {
       await this.ensureProvider();
-      console.log('Checking if player exists:', playerId);
       const result = await this.contract.players(playerId) as PlayerData;
-      console.log('Player data:', result);
       return result.isActive;
     } catch (error) {
       console.error('Error checking player existence:', error);
@@ -131,11 +129,8 @@ export class MusicContract {
   async registerPlayer(name: string, playerId: string): Promise<string> {
     try {
       await this.ensureProvider();
-      console.log('Registering player:', { name, playerId });
       const tx = await this.contract.registerPlayer(name, playerId);
-      console.log('Registration transaction sent:', tx.hash);
       const receipt = await tx.wait();
-      console.log('Registration complete:', receipt);
       return playerId;
     } catch (error) {
       console.error('Error registering player:', error);
@@ -146,17 +141,14 @@ export class MusicContract {
   async getMusicPieces(playerId: string): Promise<MusicPiece[]> {
     try {
       await this.ensureProvider();
-      console.log('Getting music pieces for player:', playerId);
       
       // Get all events and filter by creator in memory
       const filter = this.contract.filters.MusicPieceCreated();
       const events = await this.contract.queryFilter(filter);
-      console.log('Found events:', events);
       
       const pieces = await Promise.all(
         events
           .filter((event: any) => {
-            console.log('Checking event:', event);
             // The creator is now the second argument in the event args
             return event.args?.[1]?.toLowerCase() === playerId.toLowerCase();
           })
@@ -180,7 +172,6 @@ export class MusicContract {
 
       // Filter out any null values and return valid pieces
       const validPieces = pieces.filter((piece): piece is MusicPiece => piece !== null);
-      console.log('Final pieces:', validPieces);
       return validPieces;
     } catch (error) {
       console.error('Error getting music pieces:', error);
@@ -191,16 +182,13 @@ export class MusicContract {
   async createMusicPiece(creator: string, sequence: number[], timings: number[], title: string): Promise<unknown> {
     try {
       await this.ensureProvider();
-      console.log('Creating music piece:', { creator, sequence, timings, title });
       
       const sequenceForContract = sequence.map(note => BigInt(note));
       const timingsForContract = timings.map(timing => BigInt(timing));
       
       const tx = await this.contract.createMusicPiece(creator, sequenceForContract, timingsForContract, title);
-      console.log('Transaction sent:', tx.hash);
       
       const receipt = await tx.wait();
-      console.log('Transaction confirmed:', receipt);
       
       return receipt;
     } catch (error) {
