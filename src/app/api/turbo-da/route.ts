@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       responseData = JSON.parse(rawResponse);
     } catch (parseError) {
       // If not JSON, use the raw text
+      console.log(parseError);
       responseData = { message: rawResponse };
     }
     
